@@ -83,10 +83,22 @@ imports:
 - name: github.com/go-stack/stack
   version: 54be5f394ed2c3e19dac9134a40a95ba5a017f7b
 - name: github.com/golang/protobuf
-  version: 0a4f71a498b7c4812f64969510bcb4eca251e33a
+  version: 925541529c1fa6821df4e44ce2723319eb2be768
   subpackages:
   - proto
+  - ptypes
   - ptypes/any
+  - ptypes/duration
+  - ptypes/timestamp
+- name: github.com/gogo/protobuf
+  version: 1adfc126b41513cc696b209667c8656ea7aac67c
+  subpackages
+  - gogoproto
+  - jsonpb
+  - proto
+  - protoc-gen-gogo/descriptor
+  - sortkeys
+  - types
 - name: github.com/golang/snappy
   version: 553a641470496b2327abcac10b36396bd98e45c9
 - name: github.com/gorilla/websocket
