@@ -92,7 +92,7 @@ imports:
   - ptypes/timestamp
 - name: github.com/gogo/protobuf
   version: 1adfc126b41513cc696b209667c8656ea7aac67c
-  subpackages
+  subpackages:
   - gogoproto
   - jsonpb
   - proto
