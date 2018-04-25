@@ -102,7 +102,9 @@ func (mc *MockClient) BlockchainInfo(minHeight,
 
 // Status ...
 func (mc *MockClient) Status() (*ctypes.ResultStatus, error) {
-	return &ctypes.ResultStatus{Syncing: mc.syncing}, nil
+	//return &ctypes.ResultStatus{Syncing: mc.syncing}, nil
+    sync := ctypes.SyncInfo{Syncing: mc.syncing}
+	return &ctypes.ResultStatus{SyncInfo: sync}, nil
 }
 
 // -----------------------

@@ -42,7 +42,7 @@ func (app *EthermintApplication) Receiver() common.Address {
 
 // SetValidators sets new validators on the strategy
 // #unstable
-func (app *EthermintApplication) SetValidators(validators []*abciTypes.Validator) {
+func (app *EthermintApplication) SetValidators(validators []abciTypes.Validator) {
 	if app.strategy != nil {
 		app.strategy.SetValidators(validators)
 	}
@@ -52,7 +52,8 @@ func (app *EthermintApplication) SetValidators(validators []*abciTypes.Validator
 // #unstable
 func (app *EthermintApplication) GetUpdatedValidators() abciTypes.ResponseEndBlock {
 	if app.strategy != nil {
-		return abciTypes.ResponseEndBlock{Diffs: app.strategy.GetUpdatedValidators()}
+		//return abciTypes.ResponseEndBlock{Diffs: app.strategy.GetUpdatedValidators()}
+		return abciTypes.ResponseEndBlock{ValidatorUpdates: app.strategy.GetUpdatedValidators()}
 	}
 	return abciTypes.ResponseEndBlock{}
 }

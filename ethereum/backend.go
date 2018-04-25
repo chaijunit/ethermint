@@ -15,6 +15,7 @@ import (
 
 	abciTypes "github.com/tendermint/abci/types"
 
+    ctypes "github.com/tendermint/tendermint/rpc/core/types"
 	rpcClient "github.com/tendermint/tendermint/rpc/lib/client"
 
 	emtTypes "github.com/tendermint/ethermint/types"
@@ -65,6 +66,7 @@ func NewBackend(ctx *node.ServiceContext, ethConfig *eth.Config,
 
 	// We don't need PoW/Uncle validation.
 	ethereum.BlockChain().SetValidator(NullBlockProcessor{})
+    ctypes.RegisterAmino(client.Codec())
 
 	ethBackend := &Backend{
 		ethereum:  ethereum,
@@ -92,7 +94,7 @@ func (b *Backend) Config() *eth.Config {
 
 // DeliverTx appends a transaction to the current block
 // #stable
-func (b *Backend) DeliverTx(tx *ethTypes.Transaction) abciTypes.Result {
+func (b *Backend) DeliverTx(tx *ethTypes.Transaction) abciTypes.ResponseDeliverTx {
 	return b.es.DeliverTx(tx)
 }
 
@@ -116,9 +118,12 @@ func (b *Backend) InitEthState(receiver common.Address) error {
 
 // UpdateHeaderWithTimeInfo uses the tendermint header to update the ethereum header
 // #unstable
-func (b *Backend) UpdateHeaderWithTimeInfo(tmHeader *abciTypes.Header) {
-	b.es.UpdateHeaderWithTimeInfo(b.ethereum.ApiBackend.ChainConfig(), tmHeader.Time,
-		tmHeader.GetNumTxs())
+//func (b *Backend) UpdateHeaderWithTimeInfo(tmHeader *abciTypes.Header) {
+func (b *Backend) UpdateHeaderWithTimeInfo(req abciTypes.RequestBeginBlock) {
+	//b.es.UpdateHeaderWithTimeInfo(b.ethereum.ApiBackend.ChainConfig(), tmHeader.Time,
+//		tmHeader.GetNumTxs())
+	b.es.UpdateHeaderWithTimeInfo(b.ethereum.ApiBackend.ChainConfig(), req.Header.GetTime(),
+		req.Header.GetNumTxs())
 }
 
 // GasLimit returns the maximum gas per block

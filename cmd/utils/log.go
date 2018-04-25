@@ -54,26 +54,26 @@ func EthermintLogger() tmlog.Logger {
 
 // Debug proxies everything to the go-ethereum logging facilities
 // #unstable
-func (l ethermintLogger) Debug(msg string, ctx ...interface{}) error {
+func (l ethermintLogger) Debug(msg string, ctx ...interface{}) {
 	ctx = append(l.keyvals, ctx...)
 	log.Debug(msg, ctx...)
-	return nil
+	return 
 }
 
 // Info proxies everything to the go-ethereum logging facilities
 // #unstable
-func (l ethermintLogger) Info(msg string, ctx ...interface{}) error {
+func (l ethermintLogger) Info(msg string, ctx ...interface{}) {
 	ctx = append(l.keyvals, ctx...)
 	log.Info(msg, ctx...)
-	return nil
+	return 
 }
 
 // Error proxies everything to the go-ethereum logging facilities
 // #unstable
-func (l ethermintLogger) Error(msg string, ctx ...interface{}) error {
+func (l ethermintLogger) Error(msg string, ctx ...interface{}){
 	ctx = append(l.keyvals, ctx...)
 	log.Error(msg, ctx...)
-	return nil
+	return 
 }
 
 // With proxies everything to the go-ethereum logging facilities
