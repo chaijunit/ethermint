@@ -32,6 +32,10 @@ import (
 // In the same commit we also fire the TxPreEvent synchronously so the order is preserved,
 // instead of using a go-routine.
 
+var (
+    blockReward    *big.Int = big.NewInt(5e+18)     // Block reward in wei for successfully mining a block
+)
+
 type EthState struct {
 	ethereum  *eth.Ethereum
 	ethConfig *eth.Config
@@ -116,7 +120,7 @@ func (es *EthState) resetWorkState(receiver common.Address) error {
 		parent:       currentBlock,
 		state:        state,
 		txIndex:      0,
-		totalUsedGas: big.NewInt(0),
+		totalUsedGas: 0,
 		gp:           new(core.GasPool).AddGas(ethHeader.GasLimit),
 	}
 	return nil
@@ -131,8 +135,9 @@ func (es *EthState) UpdateHeaderWithTimeInfo(
 	es.work.updateHeaderWithTimeInfo(config, parentTime, numTx)
 }
 
-func (es *EthState) GasLimit() big.Int {
-	return big.Int(*es.work.gp)
+func (es *EthState) GasLimit() uint64 {
+	//return big.Int(*es.work.gp)
+	return uint64(*es.work.gp)
 }
 
 //----------------------------------------------------------------------
@@ -167,15 +172,44 @@ type workState struct {
 	receipts     ethTypes.Receipts
 	allLogs      []*ethTypes.Log
 
-	totalUsedGas *big.Int
+	totalUsedGas uint64
 	gp           *core.GasPool
 }
 
 // nolint: unparam
-func (ws *workState) accumulateRewards(strategy *emtTypes.Strategy) {
-
-	ethash.AccumulateRewards(ws.state, ws.header, []*ethTypes.Header{})
+/*
+func (ws *workState) accumulateRewards(chainConfig *params.ChainConfig, 
+        strategy *emtTypes.Strategy) {
+	//ethash.AccumulateRewards(ws.state, ws.header, []*ethTypes.Header{})
+	ethash.accumulateRewards(chainConfig, ws.state, ws.header, []*ethTypes.Header{})
 	ws.header.GasUsed = ws.totalUsedGas
+}
+*/
+
+var (
+    big8  = big.NewInt(8)
+    big32 = big.NewInt(32)
+)
+
+//func accumulateRewards(config *params.ChainConfig, state *state.StateDB, header *types.Header, uncles []*types.Header) {
+func (ws *workState) accumulateRewards(strategy *emtTypes.Strategy) {
+    // Accumulate the rewards for the miner and any included uncles
+    reward := new(big.Int).Set(blockReward)
+    r := new(big.Int)
+    uncles := []*ethTypes.Header{};
+    for _, uncle := range uncles {
+        r.Add(uncle.Number, big8)
+        r.Sub(r, ws.header.Number)
+        r.Mul(r, blockReward)
+        r.Div(r, big8)
+        ws.state.AddBalance(uncle.Coinbase, r)
+
+        r.Div(blockReward, big32)
+        reward.Add(reward, r)
+    }
+    ws.state.AddBalance(ws.header.Coinbase, reward)
+    
+    ws.header.GasUsed = ws.totalUsedGas
 }
 
 // Runs ApplyTransaction against the ethereum blockchain, fetches any logs,
@@ -193,7 +227,7 @@ func (ws *workState) deliverTx(blockchain *core.BlockChain, config *eth.Config,
 		ws.state,
 		ws.header,
 		tx,
-		ws.totalUsedGas,
+		&ws.totalUsedGas,
 		vm.Config{EnablePreimageRecording: config.EnablePreimageRecording},
 	)
 	if err != nil {
@@ -222,7 +256,8 @@ func (ws *workState) deliverTx(blockchain *core.BlockChain, config *eth.Config,
 func (ws *workState) commit(blockchain *core.BlockChain, db ethdb.Database) (common.Hash, error) {
 
 	// Commit ethereum state and update the header.
-	hashArray, err := ws.state.CommitTo(db.NewBatch(), false) // XXX: ugh hardforks
+	//hashArray, err := ws.state.CommitTo(db.NewBatch(), false) // XXX: ugh hardforks
+	hashArray, err := ws.state.Commit(false) // XXX: ugh hardforks
 	if err != nil {
 		return common.Hash{}, err
 	}

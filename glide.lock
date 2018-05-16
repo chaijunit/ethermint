@@ -11,8 +11,16 @@ imports:
   - btcec
 - name: github.com/edsrzf/mmap-go
   version: 0bce6a6887123b67a60366d2c9fe2dfb74289d2e
+- name: github.com/elastic/gosigar
+  version: a3814ce5008e612a0c6d027608b54e1d0d9a5613
+- name: github.com/prometheus/prometheus
+  version: 3101606756c53221ed58ba94ecba6b26adf89dcc
+  subpackages:
+  - util/flock
+- name: gopkg.in/olebedev/go-duktape.v3
+  version: abf0ba0be5d5d36b1f9266463cc320b9a5ab224e
 - name: github.com/ethereum/go-ethereum
-  version: d9e23666755ebeb632dc8c3f902650971594e5a7
+  version: 683924fb7c976edd33b3e42b9cdcf20d517f8501 
   repo: https://github.com/tendermint/go-ethereum.git
   subpackages:
   - accounts

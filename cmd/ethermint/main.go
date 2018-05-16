@@ -21,6 +21,7 @@ var (
 		ethUtils.DataDirFlag,
 		ethUtils.KeyStoreDirFlag,
 		ethUtils.NoUSBFlag,
+        ethUtils.GCModeFlag,
 		// Performance tuning
 		ethUtils.CacheFlag,
 		ethUtils.TrieCacheGenFlag,
