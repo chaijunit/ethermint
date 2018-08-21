@@ -16,7 +16,7 @@ import (
 var defaultGenesisBlob = []byte(`
 {
     "config": {
-        "chainId": 15,
+        "chainId": 1,
         "homesteadBlock": 0,
         "eip155Block": 0,
         "eip158Block": 0
@@ -27,11 +27,8 @@ var defaultGenesisBlob = []byte(`
     "mixhash": "0x0000000000000000000000000000000000000000000000000000000000000000",
     "difficulty": "0x40",
     "gasLimit": "0x8000000",
-    "extraData": "",
-    "coinbase":"0x0000000000000000000000000000000000000000",
     "alloc": {
-        "0x7eff122b94897ea5b0e2a9abf47b86337fafebdc": { "balance": "10000000000000000000000000000000000" },
-	    "0xc6713982649D9284ff56c32655a9ECcCDA78422A": { "balance": "10000000000000000000000000000000000" }
+        "0x7F4b997e530537009FEbd8091635457Dd525a930": { "balance": "10000000000000000000000000000000000" }
     }
 }`)
 

@@ -8,7 +8,6 @@ import (
 
 	ethUtils "github.com/ethereum/go-ethereum/cmd/utils"
 	"github.com/ethereum/go-ethereum/eth"
-	"github.com/ethereum/go-ethereum/consensus/ethash"
 	"github.com/ethereum/go-ethereum/node"
 	"github.com/ethereum/go-ethereum/params"
 
@@ -102,9 +101,8 @@ func SetEthermintNodeConfig(cfg *node.Config) {
 // SetEthermintEthConfig takes a ethereum configuration and applies ethermint specific configuration
 // #unstable
 func SetEthermintEthConfig(cfg *eth.Config) {
-	//cfg.MaxPeers = 0
-	//cfg.PowFake = true
-	cfg.Ethash.PowMode = ethash.ModeFake
+	cfg.MaxPeers = 0
+	cfg.PowFake = true
 }
 
 // MakeDataDir retrieves the currently requested data directory

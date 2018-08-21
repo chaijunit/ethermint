@@ -81,7 +81,8 @@ func (app *EthermintApplication) Info(req abciTypes.RequestInfo) abciTypes.Respo
 	blockchain := app.backend.Ethereum().BlockChain()
 	currentBlock := blockchain.CurrentBlock()
 	height := currentBlock.Number()
-	hash := currentBlock.TxHash()
+	//hash := currentBlock.TxHash()
+    hash := blockchain.LastBlockHash()
 
 	app.logger.Debug("Info", "height", height) // nolint: errcheck
 
@@ -124,7 +125,7 @@ func (app *EthermintApplication) CheckTx(txBytes []byte) abciTypes.ResponseCheck
 	tx, err := decodeTx(txBytes)
 	if err != nil {
 		// nolint: errcheck
-		app.logger.Debug("CheckTx: Received invalid transaction", "tx", tx, "err", err.Error())
+		app.logger.Debug("CheckTx: Received invalid transaction", "tx", tx)
 		//return abciTypes.ErrEncodingError.AppendLog(err.Error())
         return abciTypes.ResponseCheckTx{
             Code: code.CodeTypeEncodingError,
@@ -153,7 +154,7 @@ func (app *EthermintApplication) DeliverTx(txBytes []byte) abciTypes.ResponseDel
 	if res.IsErr() {
 		// nolint: errcheck
 		app.logger.Error("DeliverTx: Error delivering tx to ethereum backend", "tx", tx,
-			"err", res.Log)
+			"err", err)
 		return res
 	}
 	app.CollectTx(tx)
@@ -288,8 +289,7 @@ func (app *EthermintApplication) validateTx(tx *ethTypes.Transaction) abciTypes.
 
 	// Check the transaction doesn't exceed the current block limit gas.
 	gasLimit := app.backend.GasLimit()
-	//if gasLimit.Cmp(tx.Gas()) < 0 {
-	if gasLimit < tx.Gas() {
+	if gasLimit.Cmp(tx.Gas()) < 0 {
 		//return abciTypes.ErrInternalError.
 	//		AppendLog(core.ErrGasLimitReached.Error())
         return abciTypes.ResponseCheckTx{
@@ -322,14 +322,8 @@ func (app *EthermintApplication) validateTx(tx *ethTypes.Transaction) abciTypes.
                 currentBalance, tx.Cost())}
 	}
 
-	intrGas,  err := core.IntrinsicGas(tx.Data(), tx.To() == nil, true) // homestead == true
-    if(err != nil) {
-        return abciTypes.ResponseCheckTx{
-            Code: code.CodeTypeEncodingError,
-            Log: core.ErrIntrinsicGas.Error()}
-    }
-	//if tx.Gas().Cmp(intrGas) < 0 {
-	if tx.Gas() < intrGas {
+	intrGas := core.IntrinsicGas(tx.Data(), tx.To() == nil, true) // homestead == true
+	if tx.Gas().Cmp(intrGas) < 0 {
 		//return abciTypes.ErrBaseInsufficientFees.
 	//		AppendLog(core.ErrIntrinsicGas.Error())
         return abciTypes.ResponseCheckTx{

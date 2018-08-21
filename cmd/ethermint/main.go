@@ -21,7 +21,6 @@ var (
 		ethUtils.DataDirFlag,
 		ethUtils.KeyStoreDirFlag,
 		ethUtils.NoUSBFlag,
-        ethUtils.GCModeFlag,
 		// Performance tuning
 		ethUtils.CacheFlag,
 		ethUtils.TrieCacheGenFlag,
@@ -37,6 +36,7 @@ var (
 		utils.TargetGasLimitFlag,
 		// Gas Price
 		ethUtils.GasPriceFlag,
+        ethUtils.ListenPortFlag,
 	}
 
 	rpcFlags = []cli.Flag{
